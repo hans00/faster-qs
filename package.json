@@ -1,0 +1,34 @@
+{
+  "name": "faster-qs",
+  "version": "0.1.0",
+  "description": "Fast query string parser and has most features of `qs`",
+  "type": "module",
+  "main": "index.mjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "bench": "node bench.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hans00/faster-qs.git"
+  },
+  "keywords": [
+    "qs",
+    "querystring",
+    "parse",
+    "parser"
+  ],
+  "author": "Hans <me@hans00.me>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hans00/faster-qs/issues"
+  },
+  "homepage": "https://github.com/hans00/faster-qs#readme",
+  "dependencies": {
+    "fast-querystring": "^1.1.2"
+  },
+  "devDependencies": {
+    "qs": "^6.11.2",
+    "tinybench": "^2.5.0"
+  }
+}
