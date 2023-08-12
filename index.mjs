@@ -2,35 +2,41 @@ import { parse as parser } from 'fast-querystring'
 
 const isPosInt = (str) => {
   const n = Number(str)
-  return n !== Infinity && Number.isInteger(n) && n >= 0
+  return Number.isInteger(n) && n >= 0
 }
 
 const resolvePath = (o, path, v=null, d) => {
-  if (!path) return o ? [].concat(o, v) : v
+  if (!path) {
+    if (!o) return v
+    o.push(v)
+    return o
+  }
   if (d === 0) return { [path]: v }
   const l = path.indexOf('[')
   const r = path.indexOf(']')
   if (l === -1 || r === -1 || l > r) return { [path]: v }
-  const k = path.slice(l + 1, r) || (o?.length ?? '0')
+  const k = path.slice(l + 1, r) || o?.length || 0
   const next = path.slice(r + 1)
   if (isPosInt(k)) {
     let i = Number(k)
-    if (o && typeof o === 'object' && !Array.isArray(o)) {
-      if (!i) i = Object.keys(o).length
+    if (!o) o = []
+    else if (!Array.isArray(o)) {
+      if (!k && !i) i = Object.keys(o).length
       return {
         ...o,
-        [i]: resolvePath(o[i], next, v, d - 1, opt),
+        [i]: resolvePath(o[i], next, v, d - 1),
       }
     }
-    if (i > 0) {
-      if (!o) o = []
-      for (let len = o.length; len <= i; len += 1) {
-        o.push()
-      }
-    } else if (!o) {
-      o = []
+    const extend = i - o.length + 1
+    if (extend > 0) {
+      o.push.apply(o, Array.apply(null, Array(extend)))
     }
-    o[i] = resolvePath(o[i], next, v, d - 1)
+    if (next === '[]' && typeof v !== 'string' && (!o[i] || Array.isArray(o[i]))) {
+      o[i] ??= []
+      o[i].push.apply(o[i], v)
+    } else {
+      o[i] = resolvePath(o[i], next, v, d - 1)
+    }
     return o
   } else if (!{}[k]) {
     return {
@@ -38,7 +44,7 @@ const resolvePath = (o, path, v=null, d) => {
       [k]: resolvePath(o?.[k], next, v, d - 1),
     }
   } else {
-    return null
+    return o
   }
 }
 
@@ -46,13 +52,18 @@ export default (str, depth=5) =>
   Object.entries(parser(str))
     .reduce((o, [k, v]) => {
       const l = k.indexOf('[')
-      const r = k.indexOf(']')
-      if (l > 0 && r > l) {
+      if (l > 0 && k.indexOf(']') > l) {
         const key = k.slice(0, l)
         const path = k.slice(l)
         if (path === '[]') {
-          if (o[key]) o[key] = [].concat(o[key], v)
-          else o[key] = v
+          if (key in o) {
+            if (!Array.isArray(o[key]))
+              o[key] = [o[key]]
+            o[key].push.apply(
+              o[key],
+              typeof v === 'string' ? [v] : v
+            )
+          } else o[key] = v
         } else {
           o[key] = resolvePath(o[key], path, v, depth)
         }
