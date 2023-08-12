@@ -6,8 +6,8 @@ const isPosInt = (str) => {
 }
 
 const resolvePath = (o, path, v=null, d) => {
-  if (d === 0) return { [path]: v }
   if (!path) return o ? [].concat(o, v) : v
+  if (d === 0) return { [path]: v }
   const l = path.indexOf('[')
   const r = path.indexOf(']')
   if (l === -1 || r === -1 || l > r) return { [path]: v }
