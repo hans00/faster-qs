@@ -20,17 +20,22 @@ console.log(qs.parse(str));
 
 ## Benchmark
 
-Run on node v18.14.0
-
 ```sh
-> node bench.mjs
+> node benchmark/index.mjs
 
-┌─────────┬────────────────────┬───────────┬────────────────────┬──────────┬─────────┐
-│ (index) │     Task Name      │  ops/sec  │ Average Time (ns)  │  Margin  │ Samples │
-├─────────┼────────────────────┼───────────┼────────────────────┼──────────┼─────────┤
-│    0    │    'faster-qs'     │ '154,044' │  6491.63782516881  │ '±0.52%' │  77023  │
-│    1    │        'qs'        │ '28,744'  │ 34789.24597610986  │ '±0.86%' │  14373  │
-│    2    │ 'fast-querystring' │ '330,342' │ 3027.1599327571294 │ '±0.34%' │ 165172  │
-│    3    │ 'node:querystring' │ '235,583' │ 4244.776919820133  │ '±0.40%' │ 117792  │
-└─────────┴────────────────────┴───────────┴────────────────────┴──────────┴─────────┘
+cpu: 11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz
+runtime: node v18.14.0 (x64-linux)
+
+benchmark             time (avg)             (min … max)       p75       p99      p995
+-------------------------------------------------------- -----------------------------
+faster-qs            6.1 µs/iter   (5.53 µs … 432.77 µs)   5.81 µs  12.17 µs  14.35 µs
+qs                 36.64 µs/iter    (31.87 µs … 1.12 ms)  33.45 µs  84.47 µs 108.88 µs
+fast-querystring    3.27 µs/iter     (2.87 µs … 5.95 µs)   3.28 µs   5.95 µs   5.95 µs
+node:querystring    4.26 µs/iter   (3.74 µs … 369.83 µs)   4.05 µs    7.9 µs   9.06 µs
+
+summary
+  faster-qs
+   1.87x slower than fast-querystring
+   1.43x slower than node:querystring
+   6x faster than qs
 ```
