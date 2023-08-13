@@ -1,9 +1,6 @@
 import { parse as parser } from 'fast-querystring'
 
-const BAD_KEYS = new Set([
-  'length',
-  ...Object.getOwnPropertyNames(Object.prototype),
-])
+const BAD_KEYS = new Set(Object.getOwnPropertyNames(Object.prototype))
 
 const isPosInt = (str) => {
   const n = Number(str)
@@ -13,18 +10,21 @@ const isPosInt = (str) => {
 const resolvePath = (o, path, v=null, d) => {
   let next = path
   let cur = o
+  let curIsArray
   for (let l, r, k; d > 0 || !next; d--) {
     l = next.indexOf('[')
     r = next.indexOf(']')
     if (l === -1 || r === -1 || l > r) return { [next]: v }
-    k = next.slice(l + 1, r) || cur?.length || 0
+    curIsArray = cur instanceof Array
+    k = next.slice(l + 1, r) || (curIsArray ? cur.length : 0)
     next = next.slice(r + 1)
     if (isPosInt(k)) {
       if (!cur) {
         cur = []
         o = cur
+        curIsArray = true
       }
-      if (!(cur instanceof Array)) {
+      if (!curIsArray) {
         if (!k) k = Object.keys(cur).length
         cur = cur[k] = {}
         continue
@@ -48,7 +48,7 @@ const resolvePath = (o, path, v=null, d) => {
         cur = {}
         o = cur
       }
-      if (typeof cur === 'string') {
+      if (curIsArray || typeof cur === 'string') {
         break
       }
       if (!next) {
@@ -69,7 +69,7 @@ const resolvePath = (o, path, v=null, d) => {
     }
   }
   if (next) {
-    if (cur instanceof Array) {
+    if (curIsArray) {
       cur.push({ [next]: v })
     } else if (typeof cur === 'object') {
       cur[next] = v
