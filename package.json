@@ -6,7 +6,8 @@
   "main": "index.mjs",
   "scripts": {
     "test": "npx mocha __tests__",
-    "bench": "node bench.mjs",
+    "bench": "node benchmark/index.mjs",
+    "bench-node": "node benchmark/node.mjs",
     "postversion": "git push && git push --tags"
   },
   "repository": {
@@ -30,8 +31,8 @@
   },
   "devDependencies": {
     "chai": "^4.3.7",
+    "mitata": "^0.1.6",
     "mocha": "^10.2.0",
-    "qs": "^6.11.2",
-    "tinybench": "^2.5.0"
+    "qs": "^6.11.2"
   }
 }
