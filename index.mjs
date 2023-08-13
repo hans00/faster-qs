@@ -29,7 +29,7 @@ const resolvePath = (o, path, v=null, d) => {
         cur.push.apply(cur, Array(extend))
       }
       if (next === '[]' && typeof v !== 'string') {
-        cur[i] = v
+        cur[i] = [...cur[i] ?? [], ...v]
         return o
       } else if (next) {
         if (next.startsWith('[]')) {
