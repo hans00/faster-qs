@@ -29,11 +29,10 @@ const resolvePath = (o, path, v=null, d) => {
     }
     const extend = i - o.length + 1
     if (extend > 0) {
-      o.push.apply(o, Array.apply(null, Array(extend)))
+      o = [...o, ...Array(extend)]
     }
     if (next === '[]' && typeof v !== 'string' && (!o[i] || Array.isArray(o[i]))) {
-      o[i] ??= []
-      o[i].push.apply(o[i], v)
+      o[i] = [...o[i] ?? [], ...v]
     } else {
       o[i] = resolvePath(o[i], next, v, d - 1)
     }
@@ -59,10 +58,7 @@ export default (str, depth=5) =>
           if (key in o) {
             if (!Array.isArray(o[key]))
               o[key] = [o[key]]
-            o[key].push.apply(
-              o[key],
-              typeof v === 'string' ? [v] : v
-            )
+            o[key] = [].concat(o[key], v)
           } else o[key] = v
         } else {
           o[key] = resolvePath(o[key], path, v, depth)
