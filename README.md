@@ -20,7 +20,7 @@ console.log(qs.parse(str));
 
 ## Benchmark
 
-```sh
+```md
 > node benchmark/index.mjs
 
 cpu: 11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz
