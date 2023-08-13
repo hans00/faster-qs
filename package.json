@@ -6,7 +6,8 @@
   "main": "index.mjs",
   "scripts": {
     "test": "npx mocha __tests__",
-    "bench": "node bench.mjs"
+    "bench": "node bench.mjs",
+    "postversion": "git push && git push --tags"
   },
   "repository": {
     "type": "git",
