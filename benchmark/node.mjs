@@ -16,9 +16,12 @@ group('Array extend', () => {
   bench('Array.push spread', () => { const a = []; a.push(...[1]) })
 })
 
-group('typecheck', () => {
-  bench('typeof', () => typeof 1 === 'number')
-  bench('isArray', () => Array.isArray(1))
+group('isArray', () => {
+  const val = 0
+  bench('isArray', () => Array.isArray(val))
+  bench('constructor', () => val?.constructor === Array)
+  bench('instanceof', () => val instanceof Array)
+  bench('typeof', () => typeof val === 'object' && val.constructor === Array)
 })
 
 group('recursive vs iterative', () => {
@@ -64,6 +67,25 @@ group('loop keys vs entries', () => {
     const obj = { a: 1, b: 2, c: 3 }
     Object.entries(obj).forEach(([k, v]) => {})
   })
+})
+
+group('includes vs indexOf', () => {
+  bench('includes', () => [1, 2, 3].includes(3))
+  bench('indexOf', () => [1, 2, 3].indexOf(3) !== -1)
+})
+
+group('Set vs Array', () => {
+  const set = new Set([1, 2, 3])
+  const arr = [1, 2, 3]
+  bench('Set', () => set.has(3))
+  bench('Array', () => arr.includes(3))
+})
+
+group('Key exists', () => {
+  const obj = {}
+  bench('get', () => obj['a'])
+  bench('in', () => 'a' in obj)
+  bench('hasOwnProperty', () => obj.hasOwnProperty('a'))
 })
 
 await run()

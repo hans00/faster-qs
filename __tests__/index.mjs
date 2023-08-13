@@ -1,5 +1,4 @@
 import chai from 'chai'
-import qs from 'qs'
 import parse from '../index.mjs'
 
 const expect = (payload, target) =>
@@ -46,6 +45,9 @@ describe('parse', () => {
     expect('a[a][a][][b]&a[a][a][][]&a[a][a][][][c]', {
       a: { a: { a: [ { b: '' }, [ '' ], [ { c: '' } ] ] } },
     })
+    expect('a=1&a[a]=1', {
+      a: '1',
+    })
   })
 
   it('drop insecure key', () => {
@@ -57,6 +59,9 @@ describe('parse', () => {
     })
     expect('a[][__proto__]=1', {
       a: [{}],
+    })
+    expect('a[]=1&a[length]=1e100&a[]=2', {
+      a: ['1', '2'],
     })
   })
 })

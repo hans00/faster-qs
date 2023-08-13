@@ -1,5 +1,10 @@
 import { parse as parser } from 'fast-querystring'
 
+const BAD_KEYS = new Set([
+  'length',
+  ...Object.getOwnPropertyNames(Object.prototype),
+])
+
 const isPosInt = (str) => {
   const n = Number(str)
   return Number.isInteger(n) && n >= 0
@@ -8,67 +13,67 @@ const isPosInt = (str) => {
 const resolvePath = (o, path, v=null, d) => {
   let next = path
   let cur = o
-  let l, r, k
-  for (; d > 0 || !next; d--) {
+  for (let l, r, k; d > 0 || !next; d--) {
     l = next.indexOf('[')
     r = next.indexOf(']')
     if (l === -1 || r === -1 || l > r) return { [next]: v }
     k = next.slice(l + 1, r) || cur?.length || 0
     next = next.slice(r + 1)
     if (isPosInt(k)) {
-      let i = Number(k)
-      if (!cur) cur = []
-      if (!o) o = cur
-      if (!Array.isArray(cur)) {
-        if (!k && !i) i = Object.keys(cur).length
-        cur = cur[i] = {}
+      if (!cur) {
+        cur = []
+        o = cur
+      }
+      if (!(cur instanceof Array)) {
+        if (!k) k = Object.keys(cur).length
+        cur = cur[k] = {}
         continue
       }
-      const extend = i - cur.length + 1
+      k = Number(k)
+      const extend = k - cur.length + 1
       if (extend > 0) {
         cur.push.apply(cur, Array(extend))
       }
-      if (next === '[]' && typeof v !== 'string') {
-        cur[i] = [...cur[i] ?? [], ...v]
-        return o
-      } else if (next) {
-        if (next.startsWith('[]')) {
-          cur = cur[k] ??= []
-        } else {
-          if (!cur[i]) cur[i] = {}
-          else if (Array.isArray(cur[i]))
-            cur[i] = { ...cur[i] }
-          cur = cur[i]
+      if (!next) {
+        if (typeof v !== 'string') { // join array
+          cur.splice(k, 1)
+          cur.push.apply(cur, v)
+        } else { // set index
+          cur[k] = v
         }
-      } else {
-        cur[i] = v
         return o
       }
-    } else if (!{}[k]) {
-      if (!cur) cur = {}
-      if (!o) o = cur
-      if (next) {
-        if (next.startsWith('[]')) {
-          cur = cur[k] ??= []
-        } else {
-          if (!cur[k]) cur[k] = {}
-          else if (Array.isArray(cur[k]))
-            cur[k] = { ...cur[k] }
-          cur = cur[k]
-        }
-      } else {
+    } else if (!BAD_KEYS.has(k)) {
+      if (!cur) {
+        cur = {}
+        o = cur
+      }
+      if (typeof cur === 'string') {
+        break
+      }
+      if (!next) {
         cur[k] = v
         return o
       }
     } else {
       break
     }
+    // resolve next cursor
+    if (next.startsWith('[]')) {
+      cur = cur[k] ??= []
+    } else {
+      cur[k] ??= {}
+      if (cur[k] instanceof Array)
+        cur[k] = { ...cur[k] }
+      cur = cur[k]
+    }
   }
-  if (Array.isArray(cur)) {
-    if (next) cur.push({ [next]: v })
-    else cur.push(v)
-  } else if (typeof cur === 'object') {
-    if (next) cur[next] = v
+  if (next) {
+    if (cur instanceof Array) {
+      cur.push({ [next]: v })
+    } else if (typeof cur === 'object') {
+      cur[next] = v
+    }
   }
   return o
 }
@@ -83,9 +88,9 @@ export default (str, depth=5) => {
     if (l > 0 && k.indexOf(']') > l) {
       const key = k.slice(0, l)
       const path = k.slice(l)
-      if (path === '[]') {
+      if (path === '[]') { // optimize 1d array
         if (key in o) {
-          if (!Array.isArray(o[key]))
+          if (!(o[key] instanceof Array))
             o[key] = [o[key]]
           o[key] = [].concat(o[key], v)
         } else o[key] = v

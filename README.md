@@ -30,28 +30,28 @@ benchmark             time (avg)             (min … max)       p75       p99  
 -------------------------------------------------------- -----------------------------
 • basic
 -------------------------------------------------------- -----------------------------
-faster-qs         603.21 ns/iter   (547.73 ns … 1.14 µs) 607.07 ns   1.14 µs   1.14 µs
-qs                  6.72 µs/iter   (5.28 µs … 440.78 µs)   5.86 µs  16.99 µs  25.17 µs
-fast-querystring  490.43 ns/iter   (393.92 ns … 1.02 µs) 455.21 ns 974.32 ns   1.02 µs
-node:querystring  479.66 ns/iter (426.49 ns … 897.91 ns) 477.84 ns 814.14 ns 897.91 ns
+faster-qs         583.93 ns/iter   (533.32 ns … 1.22 µs) 568.81 ns   1.22 µs   1.22 µs
+qs                  5.96 µs/iter   (5.25 µs … 294.51 µs)   5.61 µs  13.49 µs  16.99 µs
+fast-querystring  408.39 ns/iter      (381.55 ns … 1 µs) 403.67 ns 600.15 ns      1 µs
+node:querystring  450.88 ns/iter (425.73 ns … 604.37 ns) 456.71 ns 532.03 ns 604.37 ns
 
 summary for basic
   faster-qs
-   1.26x slower than node:querystring
-   1.23x slower than fast-querystring
-   11.14x faster than qs
+   1.43x slower than fast-querystring
+   1.3x slower than node:querystring
+   10.2x faster than qs
 
 • deep object
 -------------------------------------------------------- -----------------------------
-faster-qs           4.46 µs/iter      (4.29 µs … 4.9 µs)   4.55 µs    4.9 µs    4.9 µs
-qs                 17.48 µs/iter  (15.15 µs … 803.78 µs)  16.15 µs  33.99 µs  43.18 µs
-fast-querystring    1.21 µs/iter     (1.14 µs … 1.48 µs)   1.22 µs   1.48 µs   1.48 µs
-node:querystring    1.65 µs/iter     (1.54 µs … 2.05 µs)   1.65 µs   2.05 µs   2.05 µs
+faster-qs           3.37 µs/iter     (3.26 µs … 3.89 µs)   3.34 µs   3.89 µs   3.89 µs
+qs                 16.91 µs/iter   (15.2 µs … 274.57 µs)  16.08 µs  34.54 µs  51.02 µs
+fast-querystring     1.2 µs/iter     (1.16 µs … 1.36 µs)    1.2 µs   1.36 µs   1.36 µs
+node:querystring    1.63 µs/iter     (1.57 µs … 1.93 µs)   1.62 µs   1.93 µs   1.93 µs
 
 summary for deep object
   faster-qs
-   3.7x slower than fast-querystring
-   2.71x slower than node:querystring
-   3.92x faster than qs
+   2.82x slower than fast-querystring
+   2.07x slower than node:querystring
+   5.01x faster than qs
 
 ```
