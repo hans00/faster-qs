@@ -36,8 +36,20 @@ describe('parse', () => {
     })
   })
 
+  it('mix array & object', () => {
+    chai.expect(parse('a[a][][a]&a[a][a]&a[a][][b]')).to.be.deep.equal({
+      a: { a: { 0: { a: '' }, a: '', 2:{ b: '' } } },
+    })
+  })
+
   it('drop insecure key', () => {
     chai.expect(parse('a[constructor][prototype][a]=1')).to.be.deep.equal({
+      a: undefined,
+    })
+    chai.expect(parse('a[toString]=1')).to.be.deep.equal({
+      a: undefined,
+    })
+    chai.expect(parse('a[__proto__]=1')).to.be.deep.equal({
       a: undefined,
     })
   })
