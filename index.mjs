@@ -8,15 +8,16 @@ const isPosInt = (str) => {
 }
 
 const resolvePath = (o, path, v=null, d) => {
+  const vIsArray = v instanceof Array
   let next = path
   let cur = o
-  let curIsArray
-  for (let l, r, k; d > 0 || !next; d--) {
-    l = next.indexOf('[')
-    r = next.indexOf(']')
-    if (l === -1 || r === -1 || l > r) return { [next]: v }
+  let curIsArray = o instanceof Array
+  let l = next.indexOf('[')
+  let r = next.indexOf(']')
+  let nextK = next.slice(l + 1, r)
+  for (let k; d > 0 || !next; d--) {
     curIsArray = cur instanceof Array
-    k = next.slice(l + 1, r) || (curIsArray ? cur.length : 0)
+    k = nextK || (curIsArray ? cur.length : 0)
     next = next.slice(r + 1)
     if (isPosInt(k)) {
       if (!cur) {
@@ -26,22 +27,8 @@ const resolvePath = (o, path, v=null, d) => {
       }
       if (!curIsArray) {
         if (!k) k = Object.keys(cur).length
-        cur = cur[k] = {}
-        continue
-      }
-      k = Number(k)
-      const extend = k - cur.length + 1
-      if (extend > 0) {
-        cur.push.apply(cur, Array(extend))
-      }
-      if (!next) {
-        if (typeof v !== 'string') { // join array
-          cur.splice(k, 1)
-          cur.push.apply(cur, v)
-        } else { // set index
-          cur[k] = v
-        }
-        return o
+      } else {
+        k = Number(k)
       }
     } else if (!BAD_KEYS.has(k)) {
       if (!cur) {
@@ -51,15 +38,30 @@ const resolvePath = (o, path, v=null, d) => {
       if (curIsArray || typeof cur === 'string') {
         break
       }
-      if (!next) {
-        cur[k] = v
-        return o
-      }
     } else {
       break
     }
+    // resolve value apply
+    if (!next) {
+      if (curIsArray && vIsArray) { // join array
+        if (r === l + 1) {
+          cur.push.apply(cur, v)
+        } else {
+          cur.splice(k, 0, v)
+        }
+      } else { // set index
+        cur[k] = v
+      }
+      return o
+    }
     // resolve next cursor
-    if (next.startsWith('[]')) {
+    l = next.indexOf('[')
+    r = next.indexOf(']')
+    nextK = next.slice(l + 1, r)
+    if (l === -1 || r === -1 || l > r) {
+      break
+    }
+    if (r === l + 1 || isPosInt(nextK)) {
       cur = cur[k] ??= []
     } else {
       cur[k] ??= {}
@@ -90,9 +92,15 @@ export default (str, depth=5) => {
       const path = k.slice(l)
       if (path === '[]') { // optimize 1d array
         if (key in o) {
-          if (!(o[key] instanceof Array))
-            o[key] = [o[key]]
-          o[key] = [].concat(o[key], v)
+          if (
+            typeof o[key] === 'string' ||
+            o[key] instanceof Array
+          ) {
+            o[key] = [].concat(o[key], v)
+          } else {
+            const ki = Object.keys(o[key]).length
+            o[key][ki] = v
+          }
         } else o[key] = v
       } else {
         o[key] = resolvePath(o[key], path, v, depth)
