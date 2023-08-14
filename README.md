@@ -20,38 +20,45 @@ console.log(qs.parse(str));
 
 ## Benchmark
 
-```md
+```js
 > node benchmark/index.mjs
 
 cpu: 11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz
 runtime: node v18.14.0 (x64-linux)
 
-benchmark             time (avg)             (min … max)       p75       p99      p995
--------------------------------------------------------- -----------------------------
-• basic
--------------------------------------------------------- -----------------------------
-faster-qs         583.93 ns/iter   (533.32 ns … 1.22 µs) 568.81 ns   1.22 µs   1.22 µs
-qs                  5.96 µs/iter   (5.25 µs … 294.51 µs)   5.61 µs  13.49 µs  16.99 µs
-fast-querystring  408.39 ns/iter      (381.55 ns … 1 µs) 403.67 ns 600.15 ns      1 µs
-node:querystring  450.88 ns/iter (425.73 ns … 604.37 ns) 456.71 ns 532.03 ns 604.37 ns
+benchmark                         time (avg)             (min … max)       p75       p99      p995
+-------------------------------------------------------------------- -----------------------------
+• simple
+-------------------------------------------------------------------- -----------------------------
+faster-qs                     221.62 ns/iter (212.21 ns … 327.51 ns) 220.76 ns 305.41 ns 325.99 ns
+qs                              3.12 µs/iter     (3.01 µs … 4.08 µs)   3.08 µs   4.08 µs   4.08 µs
+fast-querystring (no nested)  145.92 ns/iter  (135.8 ns … 661.87 ns) 146.52 ns 159.14 ns 170.95 ns
 
-summary for basic
+summary for simple
   faster-qs
-   1.43x slower than fast-querystring
-   1.3x slower than node:querystring
-   10.2x faster than qs
+   1.52x slower than fast-querystring (no nested)
+   14.09x faster than qs
+
+• array
+-------------------------------------------------------------------- -----------------------------
+faster-qs                     592.01 ns/iter    (564.85 ns … 1.1 µs) 581.35 ns    1.1 µs    1.1 µs
+qs                              5.99 µs/iter     (5.54 µs … 7.43 µs)   6.28 µs   7.43 µs   7.43 µs
+fast-querystring (no nested)  437.56 ns/iter (403.75 ns … 876.93 ns) 434.53 ns 851.04 ns 876.93 ns
+
+summary for array
+  faster-qs
+   1.35x slower than fast-querystring (no nested)
+   10.11x faster than qs
 
 • deep object
--------------------------------------------------------- -----------------------------
-faster-qs           3.37 µs/iter     (3.26 µs … 3.89 µs)   3.34 µs   3.89 µs   3.89 µs
-qs                 16.91 µs/iter   (15.2 µs … 274.57 µs)  16.08 µs  34.54 µs  51.02 µs
-fast-querystring     1.2 µs/iter     (1.16 µs … 1.36 µs)    1.2 µs   1.36 µs   1.36 µs
-node:querystring    1.63 µs/iter     (1.57 µs … 1.93 µs)   1.62 µs   1.93 µs   1.93 µs
+-------------------------------------------------------------------- -----------------------------
+faster-qs                       3.96 µs/iter    (3.37 µs … 559.3 µs)   3.71 µs   7.96 µs   9.08 µs
+qs                             17.71 µs/iter  (15.21 µs … 574.35 µs)  16.21 µs  39.41 µs  55.77 µs
+fast-querystring (no nested)    1.17 µs/iter     (1.12 µs … 1.45 µs)   1.17 µs   1.45 µs   1.45 µs
 
 summary for deep object
   faster-qs
-   2.82x slower than fast-querystring
-   2.07x slower than node:querystring
-   5.01x faster than qs
+   3.39x slower than fast-querystring (no nested)
+   4.47x faster than qs
 
 ```
