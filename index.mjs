@@ -7,18 +7,27 @@ const isPosInt = (str) => {
   return Number.isInteger(n) && n >= 0
 }
 
+
+const findFirstCharCode = (str, code, start=-1) => {
+  for (let i=start+1, c=0; i < str.length; ++i) {
+    c = str.charCodeAt(i)
+    if (c == code) return i
+  }
+  return -1
+}
+
 const resolvePath = (o, path, v=null, d) => {
   const vIsArray = v instanceof Array
   let next = path
   let cur = o
   let curIsArray = o instanceof Array
-  let l = next.indexOf('[')
-  let r = next.indexOf(']')
+  let l = findFirstCharCode(next, 91)
+  let r = findFirstCharCode(next, 93)
   let nextK = next.slice(l + 1, r)
   for (let k; d > 0 || !next; d--) {
     curIsArray = cur instanceof Array
     k = nextK || (curIsArray ? cur.length : 0)
-    next = next.slice(r + 1)
+    next = next.slice(r + 1, next.length)
     if (isPosInt(k)) {
       if (!cur) {
         cur = []
@@ -55,8 +64,8 @@ const resolvePath = (o, path, v=null, d) => {
       return o
     }
     // resolve next cursor
-    l = next.indexOf('[')
-    r = next.indexOf(']')
+    l = findFirstCharCode(next, 91)
+    r = findFirstCharCode(next, 93)
     nextK = next.slice(l + 1, r)
     if (l === -1 || r === -1 || l > r) {
       break
@@ -86,10 +95,10 @@ export default (str, depth=5) => {
   let v, l
   for (const k in data) {
     v = data[k]
-    l = k.indexOf('[')
-    if (l > 0 && k.indexOf(']') > l) {
+    l = findFirstCharCode(k, 91)
+    if (l > 0 && findFirstCharCode(k, 93) > l) {
       const key = k.slice(0, l)
-      const path = k.slice(l)
+      const path = k.slice(l, k.length)
       if (path === '[]') { // optimize 1d array
         if (key in o) {
           if (
