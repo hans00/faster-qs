@@ -1,5 +1,94 @@
 import { run, bench, group } from 'mitata'
 
+group('String parse', () => {
+  const payload = 'a&b&c'
+  const regex = /&/g
+
+    const findCharCode = (str, code) => {
+        const out = []
+        for(let i=0, c=0; i < str.length; ++i) {
+            c = payload.charCodeAt(i)
+            if (c == code) {
+                out.push(i)
+            }
+        }
+        return out
+    }
+    const findFirstCharCode = (str, code, start=0) => {
+        for(let i=start; i < str.length; ++i) {
+            if (payload.charCodeAt(i) == code) {
+                return i
+            }
+        }
+        return -1
+    }
+
+    bench('indexOf', () => {
+        const out = []
+        for (let st = 0;;) {
+            const ind = payload.indexOf('&', st)
+            if (ind < 0) {
+                out.push(payload.substring(st, payload.length))
+                break
+            } else {
+                out.push(payload.substring(st, ind))
+                st = ind + 1
+            }
+        }
+    })
+    bench('find char & skip index', () => {
+        const out = []
+        for (let i = 0, c = 0, start = 0; i < payload.length; ++i) {
+            const ind = findFirstCharCode(payload, '&', i)
+            if (ind < 0) {
+                out.push(payload.substring(start, i))
+                break
+            } else {
+                out.push(payload.substring(start, ind))
+                start = ind + 1
+                i = ind
+            }
+        }
+    })
+    bench('RegExp', () => payload.split(regex))
+    bench('string loop - each char', () => {
+        const out = []
+        for(let i=0, buf='', c=0; i < payload.length; ++i) {
+            c = payload.charCodeAt(i)
+            if (c == 38) {
+                out.push(buf)
+            } else {
+                buf += payload[i]
+            }
+        }
+    })
+    bench('string loop - skip index', () => {
+        const out = []
+        for (let i=0, prev=0, c=0; i < payload.length; ++i) {
+            c = payload.charCodeAt(i)
+            if (c == 38) {
+                out.push(payload.substring(prev, i))
+                prev = i + 1
+            }
+        }
+    })
+    bench('split', () => payload.split('&'))
+    bench('find - index array', () => findCharCode(payload, 38))
+    bench('find - map slice', () => {
+        const v = findCharCode(payload, 38)
+        v.map((pos, i) => payload.slice(v[i-1]||0, pos) )
+    })
+    bench('find - while', () => {
+        const out = []
+        let i = 0
+        let st = 0
+        while ((i = findFirstCharCode(payload, 38, st)) != -1) {
+            out.push(payload.substring(st, i))
+            st = i + 1
+        }
+    })
+})
+
 group('Object', () => {
   bench('Object.assign', () => Object.assign({}, { a: 1 }))
   bench('object spread', () => ({ ...{ a: 1 } }))
