@@ -30,7 +30,7 @@
     "fast-querystring": "^1.1.2"
   },
   "devDependencies": {
-    "chai": "^4.3.7",
+    "chai": "^5.0.0",
     "mitata": "^0.1.6",
     "mocha": "^10.2.0",
     "qs": "^6.11.2"
