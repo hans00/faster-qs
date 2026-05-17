@@ -4,6 +4,7 @@
   "description": "Fast query string parser and has most features of `qs`",
   "type": "module",
   "main": "index.mjs",
+  "types": "index.d.ts",
   "scripts": {
     "test": "npx mocha __tests__",
     "bench": "node benchmark/index.mjs",
