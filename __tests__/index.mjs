@@ -1,8 +1,8 @@
-import chai from 'chai'
+import { expect as chaiExpect } from 'chai'
 import parse from '../index.mjs'
 
 const expect = (payload, target) =>
-  chai.expect(parse(payload)).to.be.deep.equal(target)
+  chaiExpect(parse(payload)).to.be.deep.equal(target)
 
 describe('parse', () => {
   it('array', () => {
