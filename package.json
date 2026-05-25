@@ -33,7 +33,7 @@
   "devDependencies": {
     "chai": "^5.1.1",
     "mitata": "^0.1.6",
-    "mocha": "^10.2.0",
+    "mocha": "^11.7.6",
     "qs": "^6.11.2"
   }
 }
