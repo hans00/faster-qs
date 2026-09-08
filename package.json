@@ -1,7 +1,7 @@
 {
   "name": "faster-qs",
   "version": "0.2.5",
-  "description": "Fast query string parser and has most features of `qs`",
+  "description": "Fast, zero-dependency query string parser with most features of `qs`",
   "type": "module",
   "main": "index.mjs",
   "types": "index.d.ts",
@@ -27,11 +27,9 @@
     "url": "https://github.com/hans00/faster-qs/issues"
   },
   "homepage": "https://github.com/hans00/faster-qs#readme",
-  "dependencies": {
-    "fast-querystring": "^1.1.2"
-  },
   "devDependencies": {
     "chai": "^5.1.1",
+    "fast-querystring": "^1.1.2",
     "mitata": "^0.1.6",
     "mocha": "^10.2.0",
     "qs": "^6.11.2"
