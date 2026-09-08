@@ -1,6 +1,6 @@
 {
   "name": "faster-qs",
-  "version": "0.2.5",
+  "version": "0.3.0",
   "description": "Fast, zero-dependency query string parser with most features of `qs`",
   "type": "module",
   "main": "index.mjs",
