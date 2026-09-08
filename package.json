@@ -33,5 +33,9 @@
     "mitata": "^0.1.6",
     "mocha": "^10.2.0",
     "qs": "^6.11.2"
-  }
+  },
+  "files": [
+    "index.mjs",
+    "index.d.ts"
+  ]
 }
